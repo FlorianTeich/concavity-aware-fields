@@ -1,3 +1,6 @@
+cmake-build-release
+cmake-build-debug
+
 # Prerequisites
 *.d
 
@@ -30,3 +33,5 @@
 *.exe
 *.out
 *.app
+
+.idea
