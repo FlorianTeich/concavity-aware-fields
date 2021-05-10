@@ -28,10 +28,12 @@ int get_starting_point(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::MatrixXd &
                        std::vector<std::vector<int>> &A);
 
 int get_starting_point_fast(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::MatrixXd &L, int index,
-                       std::vector<std::vector<int>> &A, Eigen::MatrixXi &E, std::vector<Eigen::Triplet<double>> &basic_tripletList);
+                            std::vector<std::vector<int>> &A, Eigen::MatrixXi &E,
+                            std::vector<Eigen::Triplet<double>> &basic_tripletList);
 
 int get_starting_point_fast(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::MatrixXd &L, int index,
-                            std::vector<std::vector<int>> &A, Eigen::MatrixXi &E, std::vector<Eigen::Triplet<double>> &basic_tripletList,
+                            std::vector<std::vector<int>> &A, Eigen::MatrixXi &E,
+                            std::vector<Eigen::Triplet<double>> &basic_tripletList,
                             Eigen::MatrixXd &xx);
 
 double max_geodesic_dist(std::set<int> &extreme_point_set, Eigen::MatrixXd &V);
@@ -46,10 +48,11 @@ void get_segmentation_field(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::Matri
                             Eigen::MatrixXd &z, std::vector<int> &isoF, std::vector<int> &isoI,
                             std::vector<Eigen::Triplet<double>> &basic_tripletList);
 
-double getAngle3D (const Eigen::Vector3d &v1, const Eigen::Vector3d &v2, const bool in_degree);
+double getAngle3D(const Eigen::Vector3d &v1, const Eigen::Vector3d &v2, const bool in_degree);
 
 void get_isoline_gradient_scores(Eigen::MatrixXd &isoV, Eigen::MatrixXi &isoE, std::vector<std::vector<int>> &contours,
-                        std::vector<std::vector<int>> &contour_faces, Eigen::MatrixXd &z, std::vector<double> &score);
+                                 std::vector<std::vector<int>> &contour_faces, Eigen::MatrixXd &z,
+                                 std::vector<double> &score);
 
 void get_isoline_length(Eigen::MatrixXd &isoV, Eigen::MatrixXi &isoE, std::vector<std::vector<int>> &contours,
                         std::vector<std::vector<int>> &contour_faces, std::vector<double> &length);

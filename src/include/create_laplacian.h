@@ -3,21 +3,26 @@
 
 void compute_all_features(Eigen::MatrixXd &V, Eigen::MatrixXi &F,
                           Eigen::MatrixXi &E, Eigen::MatrixXd &N, std::vector<std::vector<int>> &VF,
-                          std::vector<std::vector<int>> &VFi, Eigen::MatrixXi &IF, Eigen::MatrixXi &OV, Eigen::MatrixXd &FC,
+                          std::vector<std::vector<int>> &VFi, Eigen::MatrixXi &IF, Eigen::MatrixXi &OV,
+                          Eigen::MatrixXd &FC,
                           Eigen::MatrixXd &FN, Eigen::MatrixXd &DA, Eigen::MatrixXd &D, Eigen::MatrixXd &L,
                           Eigen::MatrixXd &G, Eigen::MatrixXd &dblA);
 
-void compute_laplacian_harmonic(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXi &E, Eigen::MatrixXd &L, Eigen::MatrixXd &N,
-double beta, double sigma);
+void compute_laplacian_harmonic(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXi &E, Eigen::MatrixXd &L,
+                                Eigen::MatrixXd &N,
+                                double beta, double sigma);
 
 void compute_laplacian(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXi &E, Eigen::MatrixXd &G,
                        Eigen::MatrixXd &N, Eigen::MatrixXd &L, Eigen::MatrixXd &vertex_is_concave, double beta,
                        double eps, double sigma, int clip_bound, int lap_weighting, double filter1_thresh);
 
 
-void compute_laplacian_providing_concavity(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXi &E, Eigen::MatrixXd &G,
-                       Eigen::MatrixXd &N, Eigen::MatrixXd &L, Eigen::MatrixXd &vertex_is_concave, double beta,
-                       double eps, double sigma, int clip_bound, int lap_weighting, double filter1_thresh, std::string concavity_filename);
+void
+compute_laplacian_providing_concavity(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXi &E, Eigen::MatrixXd &G,
+                                      Eigen::MatrixXd &N, Eigen::MatrixXd &L, Eigen::MatrixXd &vertex_is_concave,
+                                      double beta,
+                                      double eps, double sigma, int clip_bound, int lap_weighting,
+                                      double filter1_thresh, std::string concavity_filename);
 
 void compute_segmentation_field(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &FN, Eigen::MatrixXi &E,
                                 Eigen::MatrixXd &L, int point1, int point2, int field_id,
@@ -42,8 +47,10 @@ void compute_candidate_gs(std::vector<Eigen::MatrixXd> &gradient_magnitude,
                           std::vector<double> &candidate_gs,
                           Eigen::MatrixXd &g_hat);
 
-void create_edges_from_isolines(std::vector<std::vector<Eigen::MatrixXd>> &isoline_vertices, std::vector<int> &isoline_field_id,
-                                std::vector<std::pair<Eigen::MatrixXd, Eigen::MatrixXd>> &isoline_lines, int num_fields);
+void create_edges_from_isolines(std::vector<std::vector<Eigen::MatrixXd>> &isoline_vertices,
+                                std::vector<int> &isoline_field_id,
+                                std::vector<std::pair<Eigen::MatrixXd, Eigen::MatrixXd>> &isoline_lines,
+                                int num_fields);
 
 void std_vector_to_eigen_matrix(std::vector<Eigen::MatrixXd> &v, Eigen::MatrixXd &m);
 

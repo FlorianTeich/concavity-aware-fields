@@ -14,37 +14,38 @@
 
 typedef pcl::PointXYZRGBA PointT;  // The point type used for input
 
-struct MyVertexProperties{
-  uint32_t id;
-  float weight;
-  bool is_concave;
-  int region;
-  pcl::PointNormal point;
-  pcl::PointNormal principle_direction;
-  pcl::PointNormal principle_direction2;
+struct MyVertexProperties {
+    uint32_t id;
+    float weight;
+    bool is_concave;
+    int region;
+    pcl::PointNormal point;
+    pcl::PointNormal principle_direction;
+    pcl::PointNormal principle_direction2;
 
-  void get_xyz(float xyz[]);
+    void get_xyz(float xyz[]);
 
-  MyVertexProperties () : id(0), weight(0.0), principle_direction(pcl::PointNormal()), principle_direction2(pcl::PointNormal()), point(pcl::PointNormal()),
-                          is_concave(false), region(-1) { }
+    MyVertexProperties() : id(0), weight(0.0), principle_direction(pcl::PointNormal()),
+                           principle_direction2(pcl::PointNormal()), point(pcl::PointNormal()),
+                           is_concave(false), region(-1) {}
 };
 
-struct MyEdgeProperties{
-  uint32_t id;
-  float normal_difference;
-  float weight;
-  bool is_internal;
-  bool is_concave;
-  bool cut;
-  bool valid;
-  int region;
-  int concave_region;
-  pcl::PointNormal principle_direction;
-  pcl::PointNormal principle_direction2;
+struct MyEdgeProperties {
+    uint32_t id;
+    float normal_difference;
+    float weight;
+    bool is_internal;
+    bool is_concave;
+    bool cut;
+    bool valid;
+    int region;
+    int concave_region;
+    pcl::PointNormal principle_direction;
+    pcl::PointNormal principle_direction2;
 
-  MyEdgeProperties () :id(0), is_internal(false), is_concave(false), normal_difference(0), weight(0.0), region(-1),
-                       valid(true), concave_region(-1), cut(false), principle_direction(pcl::PointNormal()),
-                       principle_direction2(pcl::PointNormal()) { }
+    MyEdgeProperties() : id(0), is_internal(false), is_concave(false), normal_difference(0), weight(0.0), region(-1),
+                         valid(true), concave_region(-1), cut(false), principle_direction(pcl::PointNormal()),
+                         principle_direction2(pcl::PointNormal()) {}
 };
 
 typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, MyVertexProperties, MyEdgeProperties> Graph;
@@ -54,139 +55,169 @@ typedef Graph::vertex_descriptor vertex_id_t;
 class edge_predicate_c {
 public:
     edge_predicate_c() : graph_m(0) {}
-    edge_predicate_c(Graph& graph) : graph_m(&graph) {}
-    bool operator()(const edge_id_t& edge_id) const {
-      return (*graph_m)[edge_id].is_concave;
+
+    edge_predicate_c(Graph &graph) : graph_m(&graph) {}
+
+    bool operator()(const edge_id_t &edge_id) const {
+        return (*graph_m)[edge_id].is_concave;
     }
+
 private:
-    Graph* graph_m;
+    Graph *graph_m;
 };
 
 class edge_predicate_cnCut {
 public:
     edge_predicate_cnCut() : graph_m(0) {}
-    edge_predicate_cnCut(Graph& graph) : graph_m(&graph) {}
-    bool operator()(const edge_id_t& edge_id) const {
-      return !((*graph_m)[edge_id].cut);
+
+    edge_predicate_cnCut(Graph &graph) : graph_m(&graph) {}
+
+    bool operator()(const edge_id_t &edge_id) const {
+        return !((*graph_m)[edge_id].cut);
     }
+
 private:
-    Graph* graph_m;
+    Graph *graph_m;
 };
 
 class edge_predicate_cn {
 public:
     edge_predicate_cn() : graph_m(0) {}
-    edge_predicate_cn(Graph& graph) : graph_m(&graph) {}
-    bool operator()(const edge_id_t& edge_id) const {
-      return (*graph_m)[edge_id].is_concave;
+
+    edge_predicate_cn(Graph &graph) : graph_m(&graph) {}
+
+    bool operator()(const edge_id_t &edge_id) const {
+        return (*graph_m)[edge_id].is_concave;
     }
+
 private:
-    Graph* graph_m;
+    Graph *graph_m;
 };
 
 class vertex_predicate_c {
 public:
     vertex_predicate_c() : graph_m(0) {}
-    vertex_predicate_c(Graph& graph) : graph_m(&graph) {}
-    bool operator()(const vertex_id_t& vertex_id) const {
-      return (*graph_m)[vertex_id].is_concave;
+
+    vertex_predicate_c(Graph &graph) : graph_m(&graph) {}
+
+    bool operator()(const vertex_id_t &vertex_id) const {
+        return (*graph_m)[vertex_id].is_concave;
     }
+
 private:
-    Graph* graph_m;
+    Graph *graph_m;
 };
 
 class vertex_predicate_region {
 public:
     vertex_predicate_region() : graph_m(0) {}
-    vertex_predicate_region(Graph& graph, int i) : graph_m(&graph), i_m(i) {}
-    bool operator()(const vertex_id_t& vertex_id ) const {
-      return (*graph_m)[vertex_id].region == i_m;
+
+    vertex_predicate_region(Graph &graph, int i) : graph_m(&graph), i_m(i) {}
+
+    bool operator()(const vertex_id_t &vertex_id) const {
+        return (*graph_m)[vertex_id].region == i_m;
     }
+
 private:
-    Graph* graph_m;
+    Graph *graph_m;
     int i_m;
 };
 
 class vertex_predicate_region_bl {
 public:
-    vertex_predicate_region_bl() : graph_m(0), blacklist_m(){}
-    vertex_predicate_region_bl(Graph& graph, int i, std::set<boost::graph_traits<Graph>::vertex_descriptor>& blacklist) :
+    vertex_predicate_region_bl() : graph_m(0), blacklist_m() {}
+
+    vertex_predicate_region_bl(Graph &graph, int i, std::set<boost::graph_traits<Graph>::vertex_descriptor> &blacklist)
+            :
             graph_m(&graph), i_m(i), blacklist_m(&blacklist) {}
-    bool operator()(const vertex_id_t& vertex_id ) const {
-      return (*graph_m)[vertex_id].region == i_m &&
-             (*graph_m)[vertex_id].is_concave &&
-             (*blacklist_m).find(vertex_id) == (*blacklist_m).end();
+
+    bool operator()(const vertex_id_t &vertex_id) const {
+        return (*graph_m)[vertex_id].region == i_m &&
+               (*graph_m)[vertex_id].is_concave &&
+               (*blacklist_m).find(vertex_id) == (*blacklist_m).end();
     }
+
 private:
-    Graph* graph_m;
+    Graph *graph_m;
     int i_m;
-    std::set<boost::graph_traits<Graph>::vertex_descriptor>* blacklist_m;
+    std::set<boost::graph_traits<Graph>::vertex_descriptor> *blacklist_m;
 };
 
 class edge_predicate_region_bl {
 public:
-    edge_predicate_region_bl() : graph_m(0), blacklist_m(){}
-    edge_predicate_region_bl(Graph& graph, int i, std::set<boost::graph_traits<Graph>::edge_descriptor>& blacklist) :
+    edge_predicate_region_bl() : graph_m(0), blacklist_m() {}
+
+    edge_predicate_region_bl(Graph &graph, int i, std::set<boost::graph_traits<Graph>::edge_descriptor> &blacklist) :
             graph_m(&graph), i_m(i), blacklist_m(&blacklist) {}
-    bool operator()(const edge_id_t& edge_id ) const {
-      return (*graph_m)[edge_id].is_concave &&
-             (*graph_m)[source(edge_id,(*graph_m))].region == i_m &&
-             (*graph_m)[target(edge_id,(*graph_m))].region == i_m &&
-             (*blacklist_m).find(edge_id) == (*blacklist_m).end();
+
+    bool operator()(const edge_id_t &edge_id) const {
+        return (*graph_m)[edge_id].is_concave &&
+               (*graph_m)[source(edge_id, (*graph_m))].region == i_m &&
+               (*graph_m)[target(edge_id, (*graph_m))].region == i_m &&
+               (*blacklist_m).find(edge_id) == (*blacklist_m).end();
     }
+
 private:
-    Graph* graph_m;
+    Graph *graph_m;
     int i_m;
-    std::set<boost::graph_traits<Graph>::edge_descriptor>* blacklist_m;
+    std::set<boost::graph_traits<Graph>::edge_descriptor> *blacklist_m;
 };
 
 class edge_predicate_region {
 public:
     edge_predicate_region() : graph_m(0) {}
-    edge_predicate_region(Graph& graph, int i) : graph_m(&graph), i_m(i) {}
-    bool operator()(const edge_id_t& edge_id ) const {
-      return (*graph_m)[edge_id].region == i_m;
+
+    edge_predicate_region(Graph &graph, int i) : graph_m(&graph), i_m(i) {}
+
+    bool operator()(const edge_id_t &edge_id) const {
+        return (*graph_m)[edge_id].region == i_m;
     }
+
 private:
-    Graph* graph_m;
+    Graph *graph_m;
     int i_m;
 };
 
 bool
-connIsConvex (const Eigen::Vector3f& source_centroid, const Eigen::Vector3f& target_centroid,
-              const Eigen::Vector3f& source_normal, const Eigen::Vector3f& target_normal, float &normal_angle);
+connIsConvex(const Eigen::Vector3f &source_centroid, const Eigen::Vector3f &target_centroid,
+             const Eigen::Vector3f &source_normal, const Eigen::Vector3f &target_normal, float &normal_angle);
 
 void meshToGraph(pcl::PointCloud<pcl::PointNormal>::Ptr cloud, pcl::PolygonMeshPtr meshData, Graph &g,
                  std::vector<boost::graph_traits<Graph>::vertex_descriptor> &vertex_list,
                  std::vector<boost::graph_traits<Graph>::edge_descriptor> &edge_list);
 
-void labelEdgesByVertexRegions(Graph& g);
+void labelEdgesByVertexRegions(Graph &g);
 
-void getConcaveEdgesFromGraph(Graph& g, std::vector<boost::graph_traits<Graph>::vertex_descriptor>& vertex_list,
-                              std::set<boost::graph_traits<Graph>::edge_descriptor>& concave_edges, bool thinning);
+void getConcaveEdgesFromGraph(Graph &g, std::vector<boost::graph_traits<Graph>::vertex_descriptor> &vertex_list,
+                              std::set<boost::graph_traits<Graph>::edge_descriptor> &concave_edges, bool thinning);
 
 void setConcaveEdges(Graph &g);
 
-void mergeSegments(Graph& g, double min_part,
-                   std::vector<boost::graph_traits<Graph>::vertex_descriptor>& vertex_list);
+void mergeSegments(Graph &g, double min_part,
+                   std::vector<boost::graph_traits<Graph>::vertex_descriptor> &vertex_list);
 
 Eigen::VectorXi
-planeLineIntersectionBatch (Eigen::Vector3f plane_normal, Eigen::Vector3f plane_point, Eigen::MatrixXf &pb1, Eigen::MatrixXf &pb2,
-  Eigen::MatrixXf &w, Eigen::VectorXf &D, Eigen::VectorXf &N);
+planeLineIntersectionBatch(Eigen::Vector3f plane_normal, Eigen::Vector3f plane_point, Eigen::MatrixXf &pb1,
+                           Eigen::MatrixXf &pb2,
+                           Eigen::MatrixXf &w, Eigen::VectorXf &D, Eigen::VectorXf &N);
 
-void getSegmentEdgesAndVertices(Graph& g, int curr_cluster, std::vector<boost::graph_traits<Graph>::edge_descriptor>& cluster_edge_list,
-                                std::vector<boost::graph_traits<Graph>::vertex_descriptor>& cluster_vertex_list,
-                                std::vector<Graph::vertex_descriptor>& cluster_concave_vertices,
-                                std::vector<boost::graph_traits<Graph>::edge_descriptor>& cluster_concave_edges,
-                                Eigen::VectorXi& globalEdgeIndices );
+void getSegmentEdgesAndVertices(Graph &g, int curr_cluster,
+                                std::vector<boost::graph_traits<Graph>::edge_descriptor> &cluster_edge_list,
+                                std::vector<boost::graph_traits<Graph>::vertex_descriptor> &cluster_vertex_list,
+                                std::vector<Graph::vertex_descriptor> &cluster_concave_vertices,
+                                std::vector<boost::graph_traits<Graph>::edge_descriptor> &cluster_concave_edges,
+                                Eigen::VectorXi &globalEdgeIndices);
 
-void MCPCSegment(Graph& g, int ransac_iterations, std::vector<boost::graph_traits<Graph>::vertex_descriptor>& vertex_list,
-                 std::vector<boost::graph_traits<Graph>::edge_descriptor>& edge_list,
-                 std::set<boost::graph_traits<Graph>::edge_descriptor>& concave_edges, double min_cut_score);
+void
+MCPCSegment(Graph &g, int ransac_iterations, std::vector<boost::graph_traits<Graph>::vertex_descriptor> &vertex_list,
+            std::vector<boost::graph_traits<Graph>::edge_descriptor> &edge_list,
+            std::set<boost::graph_traits<Graph>::edge_descriptor> &concave_edges, double min_cut_score);
 
-void mesh2EigenAndCloud(pcl::PolygonMeshPtr &mesh, Eigen::MatrixXd &V, Eigen::MatrixXd &F, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud);
+void mesh2EigenAndCloud(pcl::PolygonMeshPtr &mesh, Eigen::MatrixXd &V, Eigen::MatrixXd &F,
+                        pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud);
 
-void mesh2EigenAndCloud(pcl::PolygonMeshPtr &mesh, Eigen::MatrixXf &V, Eigen::MatrixXf &F, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud);
+void mesh2EigenAndCloud(pcl::PolygonMeshPtr &mesh, Eigen::MatrixXf &V, Eigen::MatrixXf &F,
+                        pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud);
 
 void smoothOutliers(Eigen::MatrixXf &PV1, int k);
 
@@ -196,7 +227,7 @@ Eigen::MatrixXf normalizeCurvatureAndCopy(Eigen::MatrixXf &PV1);
 
 void computeVertexNormals(pcl::PolygonMeshPtr &meshData, pcl::PointCloud<pcl::PointNormal>::Ptr &pc, bool inversion);
 
-const char* helpmessage_cpc_mesh_adjacency = "\n\
+const char *helpmessage_cpc_mesh_adjacency = "\n\
 -- MCPC - Mesh-CPC Segmentation -- :\n\
 \n\
 Syntax: %s input.obj  [Options] \n\

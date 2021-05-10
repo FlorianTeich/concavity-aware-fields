@@ -3,14 +3,15 @@
 
 #include <boost/graph/adjacency_list.hpp>
 
-struct FaceVertexProperties{
+struct FaceVertexProperties {
     int id;
     double area;
+
     FaceVertexProperties();
 };
 
-struct FaceEdgeProperties{
-    FaceEdgeProperties ();
+struct FaceEdgeProperties {
+    FaceEdgeProperties();
 };
 
 typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, FaceVertexProperties, FaceEdgeProperties> FaceGraph;
@@ -20,7 +21,8 @@ std::vector<double> split_mesh(Eigen::MatrixXi &F, Eigen::MatrixXi &E, Eigen::Ma
                                std::set<boost::graph_traits<FaceGraph>::vertex_descriptor> vertex_blacklist,
                                std::set<boost::graph_traits<FaceGraph>::edge_descriptor> edge_blacklist);
 
-void valid_cuts(Eigen::MatrixXd &V, Eigen::MatrixXd &N, Eigen::MatrixXi &F, Eigen::MatrixXd &dblA, Eigen::MatrixXi &IF, Eigen::MatrixXi &E,
+void valid_cuts(Eigen::MatrixXd &V, Eigen::MatrixXd &N, Eigen::MatrixXi &F, Eigen::MatrixXd &dblA, Eigen::MatrixXi &IF,
+                Eigen::MatrixXi &E,
                 std::vector<std::vector<int>> &candidate_face_ids, std::vector<double> &candidate_score,
                 std::vector<int> &applied_isolines);
 
