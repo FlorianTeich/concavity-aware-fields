@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
-project(FunctionalObjectUnderstanding)
+project(ConcavityAwareFields)
 
 set(ENV{CC} gcc-7)
 set(ENV{CXX} g++-7)
