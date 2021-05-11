@@ -15,6 +15,33 @@
 
 typedef pcl::PointXYZRGBA PointT;  // The point type used for input
 
+/**
+ *
+ * @param V
+ * @param F
+ * @param label
+ * @param voxel_resolution
+ * @param seed_resolution
+ * @param color_importance
+ * @param spatial_importance
+ * @param normal_importance
+ * @param use_single_cam_transform
+ * @param use_supervoxel_refinement
+ * @param concavity_tolerance_threshold
+ * @param smoothness_threshold
+ * @param min_segment_size
+ * @param use_extended_convexity
+ * @param use_sanity_criterion
+ * @param min_cut_score
+ * @param max_cuts
+ * @param cutting_min_segments
+ * @param use_local_constrain
+ * @param use_directed_cutting
+ * @param use_clean_cutting
+ * @param ransac_iterations
+ * @param k_factor
+ * @param min_part_size
+ */
 void cpc(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &label,
          float voxel_resolution,
          float seed_resolution,

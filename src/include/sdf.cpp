@@ -42,6 +42,17 @@ private:
     std::vector<ValueType> &internal_vector;
 };
 
+/**
+ *
+ * @param V
+ * @param F
+ * @param face_sdf
+ * @param vertex_sdf
+ * @param skeleton_vertices
+ * @param SE1
+ * @param SE2
+ * @param skeleton_diam
+ */
 void new_sdf(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &face_sdf, Eigen::MatrixXd &vertex_sdf,
              Eigen::MatrixXd &skeleton_vertices,
              Eigen::MatrixXd &SE1, Eigen::MatrixXd &SE2, Eigen::MatrixXd &skeleton_diam) {
@@ -151,6 +162,14 @@ void new_sdf(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &face_sdf, 
 
 }
 
+/**
+ *
+ * @param V
+ * @param F
+ * @param face_sdf
+ * @param vertex_sdf
+ * @param skeleton_vertices
+ */
 void sdf(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &face_sdf, Eigen::MatrixXd &vertex_sdf,
          Eigen::MatrixXd &skeleton_vertices) {
     Polyhedron tmesh;
@@ -222,6 +241,4 @@ void sdf(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &face_sdf, Eige
         sdf = sdf / (double) neighbors;
         vertex_sdf(i, 0) = sdf;
     }
-
-
 }

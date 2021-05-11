@@ -16,6 +16,11 @@ static hsv rgb2hsv(rgb in);
 
 static rgb hsv2rgb(hsv in);
 
+/**
+ *
+ * @param in
+ * @return
+ */
 hsv rgb2hsv(rgb in) {
     hsv out;
     double min, max, delta;
@@ -57,7 +62,11 @@ hsv rgb2hsv(rgb in) {
     return out;
 }
 
-
+/**
+ *
+ * @param in
+ * @return
+ */
 rgb hsv2rgb(hsv in) {
     double hh, p, q, t, ff;
     long i;

@@ -6,6 +6,13 @@
 
 using namespace tinyxml2;
 
+/**
+ *
+ * @param mesh_id
+ * @param seg_path
+ * @param out_path
+ * @return
+ */
 std::vector<double> evaluate_segmentation(std::string mesh_id, std::string seg_path, std::string out_path) {
     XMLDocument doc;
     doc.LoadFile("/home/florian/FunctionalObjectUnderstanding/settings.xml");

@@ -19,7 +19,12 @@
 //#include <Eigen/SparseCholesky>
 #include <chrono>
 
-
+/**
+ *
+ * @param V
+ * @param F
+ * @param N
+ */
 void compute_vertex_normals(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &N) {
     N.resize(V.rows(), 3);
     int vertex_size = V.rows();
@@ -54,6 +59,12 @@ void compute_vertex_normals(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::Matri
     }
 }
 
+/**
+ *
+ * @param E
+ * @param F
+ * @param OV
+ */
 void compute_opposite_vertices(Eigen::MatrixXi &E, Eigen::MatrixXi &F, Eigen::MatrixXi &OV) {
     std::map<std::set<int>, std::vector<int>> edge_to_opposite_vertices_map;
 
@@ -72,6 +83,12 @@ void compute_opposite_vertices(Eigen::MatrixXi &E, Eigen::MatrixXi &F, Eigen::Ma
     }
 }
 
+/**
+ *
+ * @param E
+ * @param F
+ * @param IF
+ */
 void compute_incident_faces(Eigen::MatrixXi &E, Eigen::MatrixXi &F, Eigen::MatrixXi &IF) {
     std::map<std::set<int>, std::vector<int>> edge_to_faces_map;
 
@@ -90,6 +107,13 @@ void compute_incident_faces(Eigen::MatrixXi &E, Eigen::MatrixXi &F, Eigen::Matri
     }
 }
 
+/**
+ *
+ * @param V
+ * @param F
+ * @param FC
+ * @param FN
+ */
 void compute_face_normals(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &FC, Eigen::MatrixXd &FN) {
     FC.resize(F.rows(), 3);
     FN.resize(F.rows(), 3);
@@ -111,6 +135,16 @@ void compute_face_normals(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixX
     }
 }
 
+/**
+ *
+ * @param V
+ * @param F
+ * @param E
+ * @param IF
+ * @param OV
+ * @param FN
+ * @param DA
+ */
 void compute_dihedral_angle(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXi &E, Eigen::MatrixXi &IF,
                             Eigen::MatrixXi &OV, Eigen::MatrixXd &FN, Eigen::MatrixXd &DA) {
     DA.resize(E.rows(), 1);
@@ -137,6 +171,12 @@ void compute_dihedral_angle(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::Matri
     }
 }
 
+/**
+ *
+ * @param V
+ * @param E
+ * @param D
+ */
 void compute_distance(Eigen::MatrixXd &V, Eigen::MatrixXi &E, Eigen::MatrixXd &D) {
     D.resize(E.rows(), 1);
     for (int i = 0; i < E.rows(); i++) {
@@ -146,6 +186,15 @@ void compute_distance(Eigen::MatrixXd &V, Eigen::MatrixXi &E, Eigen::MatrixXd &D
     }
 }
 
+/**
+ *
+ * @param F
+ * @param V
+ * @param L
+ * @param index
+ * @param A
+ * @return
+ */
 int get_starting_point(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::MatrixXd &L, int index,
                        std::vector<std::vector<int>> &A) {
 
@@ -175,6 +224,18 @@ int get_starting_point(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::MatrixXd &
     return maxRow;
 }
 
+/**
+ *
+ * @param F
+ * @param V
+ * @param L
+ * @param index
+ * @param A
+ * @param E
+ * @param basic_tripletList
+ * @param x
+ * @return
+ */
 int get_starting_point_fast(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::MatrixXd &L, int index,
                             std::vector<std::vector<int>> &A, Eigen::MatrixXi &E,
                             std::vector<Eigen::Triplet<double>> &basic_tripletList,
@@ -230,6 +291,18 @@ int get_starting_point_fast(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::Matri
     return maxRow;
 }
 
+/**
+ * Obtain single point to start the search for extreme points from.
+ *
+ * @param F         Faces
+ * @param V         Vertices
+ * @param L         Laplacian graph matrix
+ * @param index
+ * @param A         Adjacency matrix
+ * @param E         Edge list
+ * @param basic_tripletList     triplet list
+ * @return          index of vertex that is the resulting starting point
+ */
 int get_starting_point_fast(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::MatrixXd &L, int index,
                             std::vector<std::vector<int>> &A, Eigen::MatrixXi &E,
                             std::vector<Eigen::Triplet<double>> &basic_tripletList) {
@@ -281,6 +354,12 @@ int get_starting_point_fast(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::Matri
     return maxRow;
 }
 
+/**
+ *
+ * @param extreme_point_set
+ * @param V
+ * @return
+ */
 double max_geodesic_dist(std::set<int> &extreme_point_set, Eigen::MatrixXd &V) {
     double dist_max = 0.0;
     for (auto ele1 : extreme_point_set) {
@@ -292,6 +371,14 @@ double max_geodesic_dist(std::set<int> &extreme_point_set, Eigen::MatrixXd &V) {
     return dist_max;
 }
 
+/**
+ *
+ * @param p1
+ * @param extreme_point_set
+ * @param V
+ * @param dist_prox
+ * @return
+ */
 bool in_proximity_to(Eigen::MatrixXd p1, std::set<int> &extreme_point_set, Eigen::MatrixXd &V, double dist_prox) {
     bool is_prox = false;
     for (auto ele1 : extreme_point_set) {
@@ -301,6 +388,15 @@ bool in_proximity_to(Eigen::MatrixXd p1, std::set<int> &extreme_point_set, Eigen
     return is_prox;
 }
 
+/**
+ *
+ * @param F
+ * @param V
+ * @param L
+ * @param index_given
+ * @param E
+ * @return
+ */
 std::vector<int> get_extreme_points(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::MatrixXd &L, int index_given,
                                     Eigen::MatrixXi &E) {
 
@@ -459,6 +555,21 @@ std::vector<int> get_extreme_points(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eige
     return extreme_points;
 }
 
+/**
+ *
+ * @param F
+ * @param V
+ * @param L
+ * @param E
+ * @param index1
+ * @param index2
+ * @param isoV
+ * @param isoE
+ * @param z
+ * @param isoF
+ * @param isoI
+ * @param basic_tripletList
+ */
 void get_segmentation_field(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::MatrixXd &L, Eigen::MatrixXi &E,
                             int index1, int index2, Eigen::MatrixXd &isoV, Eigen::MatrixXd &isoE,
                             Eigen::MatrixXd &z, std::vector<int> &isoF, std::vector<int> &isoI,
@@ -511,6 +622,15 @@ void get_segmentation_field(Eigen::MatrixXi &F, Eigen::MatrixXd &V, Eigen::Matri
     isolines(V, F, z, 50, isoV, isoE, isoF, isoI);
 }
 
+/**
+ *
+ * @param isoV
+ * @param isoE
+ * @param contours
+ * @param contour_faces
+ * @param z
+ * @param score
+ */
 void get_isoline_gradient_scores(Eigen::MatrixXd &isoV, Eigen::MatrixXi &isoE, std::vector<std::vector<int>> &contours,
                                  std::vector<std::vector<int>> &contour_faces, Eigen::MatrixXd &z,
                                  std::vector<double> &score) {
@@ -537,6 +657,15 @@ void get_isoline_gradient_scores(Eigen::MatrixXd &isoV, Eigen::MatrixXi &isoE, s
     }
 }
 
+/**
+ *
+ * @param isoV
+ * @param isoE
+ * @param contours
+ * @param contour_faces
+ * @param z
+ * @param score
+ */
 void get_isoline_shape_scores(Eigen::MatrixXd &isoV, Eigen::MatrixXi &isoE, std::vector<std::vector<int>> &contours,
                               std::vector<std::vector<int>> &contour_faces, Eigen::MatrixXd &z,
                               std::vector<double> &score) {
@@ -563,6 +692,14 @@ void get_isoline_shape_scores(Eigen::MatrixXd &isoV, Eigen::MatrixXi &isoE, std:
     }
 }
 
+/**
+ *
+ * @param isoV
+ * @param isoE
+ * @param contours
+ * @param contour_faces
+ * @param length
+ */
 void get_isoline_length(Eigen::MatrixXd &isoV, Eigen::MatrixXi &isoE, std::vector<std::vector<int>> &contours,
                         std::vector<std::vector<int>> &contour_faces, std::vector<double> &length) {
     length.clear();
@@ -581,6 +718,13 @@ void get_isoline_length(Eigen::MatrixXd &isoV, Eigen::MatrixXi &isoE, std::vecto
     }
 }
 
+/**
+ *
+ * @param V1
+ * @param F1
+ * @param V2
+ * @param F2
+ */
 void add_mesh(Eigen::MatrixXd &V1, Eigen::MatrixXi &F1, Eigen::MatrixXd &V2, Eigen::MatrixXi &F2) {
     Eigen::MatrixXd V(V1.rows() + V2.rows(), V1.cols());
     V << V1, V2;

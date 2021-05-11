@@ -5,6 +5,15 @@
 #include <random>
 #include <igl/sort.h>
 
+/**
+ *
+ * @param source_centroid
+ * @param target_centroid
+ * @param source_normal
+ * @param target_normal
+ * @param normal_angle
+ * @return
+ */
 bool
 connIsConvex(const Eigen::Vector3f &source_centroid, const Eigen::Vector3f &target_centroid,
              const Eigen::Vector3f &source_normal, const Eigen::Vector3f &target_normal, float &normal_angle) {
@@ -31,6 +40,14 @@ connIsConvex(const Eigen::Vector3f &source_centroid, const Eigen::Vector3f &targ
     return (is_convex && is_smooth);
 }
 
+/**
+ *
+ * @param cloud
+ * @param meshData
+ * @param g
+ * @param vertex_list
+ * @param edge_list
+ */
 void meshToGraph(pcl::PointCloud<pcl::PointNormal>::Ptr cloud, pcl::PolygonMeshPtr meshData, Graph &g,
                  std::vector<boost::graph_traits<Graph>::vertex_descriptor> &vertex_list,
                  std::vector<boost::graph_traits<Graph>::edge_descriptor> &edge_list) {
@@ -75,6 +92,10 @@ void meshToGraph(pcl::PointCloud<pcl::PointNormal>::Ptr cloud, pcl::PolygonMeshP
     }
 }
 
+/**
+ *
+ * @param g
+ */
 void labelEdgesByVertexRegions(Graph &g) {
     boost::graph_traits<Graph>::vertex_descriptor v1, v2;
     typedef boost::graph_traits<Graph>::edge_iterator edge_iter;
@@ -256,6 +277,10 @@ void getConcaveEdgesFromGraph(Graph &g, std::vector<boost::graph_traits<Graph>::
     }
 }
 
+/**
+ *
+ * @param g
+ */
 void setConcaveEdges(Graph &g) {
     boost::graph_traits<Graph>::vertex_descriptor v1, v2;
     typedef boost::graph_traits<Graph>::edge_iterator edge_iter;
@@ -352,7 +377,12 @@ void setConcaveEdges(Graph &g) {
     }*/
 }
 
-
+/**
+ *
+ * @param g
+ * @param min_part
+ * @param vertex_list
+ */
 void mergeSegments(Graph &g, double min_part,
                    std::vector<boost::graph_traits<Graph>::vertex_descriptor> &vertex_list) {
     typedef boost::graph_traits<Graph>::edge_iterator edge_iter;
@@ -428,7 +458,17 @@ void mergeSegments(Graph &g, double min_part,
     }
 }
 
-
+/**
+ *
+ * @param plane_normal
+ * @param plane_point
+ * @param pb1
+ * @param pb2
+ * @param w
+ * @param D
+ * @param N
+ * @return
+ */
 Eigen::VectorXi
 planeLineIntersectionBatch(Eigen::Vector3f plane_normal, Eigen::Vector3f plane_point, Eigen::MatrixXf &pb1,
                            Eigen::MatrixXf &pb2,
@@ -465,6 +505,16 @@ planeLineIntersectionBatch(Eigen::Vector3f plane_normal, Eigen::Vector3f plane_p
     return check;
 }
 
+/**
+ *
+ * @param g
+ * @param curr_cluster
+ * @param cluster_edge_list
+ * @param cluster_vertex_list
+ * @param cluster_concave_vertices
+ * @param cluster_concave_edges
+ * @param globalEdgeIndices
+ */
 void getSegmentEdgesAndVertices(Graph &g, int curr_cluster,
                                 std::vector<boost::graph_traits<Graph>::edge_descriptor> &cluster_edge_list,
                                 std::vector<boost::graph_traits<Graph>::vertex_descriptor> &cluster_vertex_list,
@@ -508,6 +558,15 @@ void getSegmentEdgesAndVertices(Graph &g, int curr_cluster,
     }
 }
 
+/**
+ *
+ * @param g
+ * @param ransac_iterations
+ * @param vertex_list
+ * @param edge_list
+ * @param concave_edges
+ * @param min_cut_score
+ */
 void
 MCPCSegment(Graph &g, int ransac_iterations, std::vector<boost::graph_traits<Graph>::vertex_descriptor> &vertex_list,
             std::vector<boost::graph_traits<Graph>::edge_descriptor> &edge_list,
@@ -743,6 +802,13 @@ MCPCSegment(Graph &g, int ransac_iterations, std::vector<boost::graph_traits<Gra
     std::cout << "No more cuts found.\n";
 }
 
+/**
+ *
+ * @param mesh
+ * @param V
+ * @param F
+ * @param cloud
+ */
 void mesh2EigenAndCloud(pcl::PolygonMeshPtr &mesh, Eigen::MatrixXd &V, Eigen::MatrixXd &F,
                         pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud) {
     pcl::fromPCLPointCloud2(mesh->cloud, *cloud);
@@ -767,6 +833,13 @@ void mesh2EigenAndCloud(pcl::PolygonMeshPtr &mesh, Eigen::MatrixXd &V, Eigen::Ma
     }
 }
 
+/**
+ *
+ * @param mesh
+ * @param V
+ * @param F
+ * @param cloud
+ */
 void mesh2EigenAndCloud(pcl::PolygonMeshPtr &mesh, Eigen::MatrixXf &V, Eigen::MatrixXf &F,
                         pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud) {
     pcl::fromPCLPointCloud2(mesh->cloud, *cloud);
@@ -791,6 +864,11 @@ void mesh2EigenAndCloud(pcl::PolygonMeshPtr &mesh, Eigen::MatrixXf &V, Eigen::Ma
     }
 }
 
+/**
+ *
+ * @param PV1
+ * @param k
+ */
 void smoothOutliers(Eigen::MatrixXf &PV1, int k) {
     Eigen::MatrixXf PP(PV1.size(), 1);
     Eigen::MatrixXf PPJ(PV1.size(), 1);
@@ -802,6 +880,10 @@ void smoothOutliers(Eigen::MatrixXf &PV1, int k) {
     }
 }
 
+/**
+ *
+ * @param PV1
+ */
 void normalizeCurvature(Eigen::MatrixXf &PV1) {
     Eigen::MatrixXf a = PV1 - PV1.mean() * Eigen::MatrixXf::Ones(PV1.size(), 1);
     Eigen::MatrixXf b = a.cwiseProduct(a);
@@ -811,6 +893,11 @@ void normalizeCurvature(Eigen::MatrixXf &PV1) {
     PV1 = PV2;
 }
 
+/**
+ *
+ * @param PV1
+ * @return
+ */
 Eigen::MatrixXf normalizeCurvatureAndCopy(Eigen::MatrixXf &PV1) {
     Eigen::MatrixXf a = PV1 - PV1.mean() * Eigen::MatrixXf::Ones(PV1.size(), 1);
     Eigen::MatrixXf b = a.cwiseProduct(a);
@@ -820,6 +907,12 @@ Eigen::MatrixXf normalizeCurvatureAndCopy(Eigen::MatrixXf &PV1) {
     return PV2;
 }
 
+/**
+ *
+ * @param meshData
+ * @param pc
+ * @param inversion
+ */
 void computeVertexNormals(pcl::PolygonMeshPtr &meshData, pcl::PointCloud<pcl::PointNormal>::Ptr &pc, bool inversion) {
     pcl::fromPCLPointCloud2(meshData->cloud, *pc);
 

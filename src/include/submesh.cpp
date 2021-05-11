@@ -1,11 +1,17 @@
-//
-// Created by florian on 23.02.18.
-//
-
 #include "submesh.hpp"
 #include <iostream>
 #include <map>
 
+/**
+ *
+ * @param V
+ * @param F
+ * @param vertex_indices
+ * @param SV
+ * @param SF
+ * @param mvi2smvi
+ * @param mfi2smfi
+ */
 void submesh(Eigen::MatrixXd &V, Eigen::MatrixXi &F, std::set<int> &vertex_indices,
              Eigen::MatrixXd &SV, Eigen::MatrixXi &SF, std::map<int, int> &mvi2smvi, std::map<int, int> &mfi2smfi) {
     //std::map<int, int> mfi2smfi;

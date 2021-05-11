@@ -16,6 +16,24 @@
 #include "basic_mesh_functions.h"
 #include "get_separate_lines.h"
 
+/**
+ *
+ * @param V
+ * @param F
+ * @param E
+ * @param N
+ * @param VF
+ * @param VFi
+ * @param IF
+ * @param OV
+ * @param FC
+ * @param FN
+ * @param DA
+ * @param D
+ * @param L
+ * @param G
+ * @param dblA
+ */
 void compute_all_features(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXi &E, Eigen::MatrixXd &N,
                           std::vector<std::vector<int>> &VF,
                           std::vector<std::vector<int>> &VFi, Eigen::MatrixXi &IF, Eigen::MatrixXi &OV,
@@ -99,6 +117,13 @@ void compute_all_features(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixX
     igl::per_vertex_normals(V, F, FN, N);
 }
 
+/**
+ *
+ * @param v1
+ * @param v2
+ * @param in_degree
+ * @return
+ */
 double getAngle3D(const Eigen::Vector3d &v1, const Eigen::Vector3d &v2, const bool in_degree) {
     // Compute the actual angle
     double rad = v1.normalized().dot(v2.normalized());
@@ -109,6 +134,15 @@ double getAngle3D(const Eigen::Vector3d &v1, const Eigen::Vector3d &v2, const bo
     return (in_degree ? acos(rad) * 180.0 / M_PI : acos(rad));
 }
 
+/**
+ *
+ * @param source_centroid
+ * @param target_centroid
+ * @param source_normal
+ * @param target_normal
+ * @param normal_angle
+ * @return
+ */
 bool
 connIsConvex(const Eigen::Vector3d &source_centroid, const Eigen::Vector3d &target_centroid,
              const Eigen::Vector3d &source_normal, const Eigen::Vector3d &target_normal, double &normal_angle) {
@@ -136,6 +170,11 @@ connIsConvex(const Eigen::Vector3d &source_centroid, const Eigen::Vector3d &targ
     return (is_convex && is_smooth);
 }
 
+/**
+ *
+ * @param M
+ * @param filename
+ */
 void var_to_file(Eigen::MatrixXd &M, std::string filename) {
     std::ofstream myfile;
     myfile.open(filename);
@@ -143,6 +182,11 @@ void var_to_file(Eigen::MatrixXd &M, std::string filename) {
     myfile.close();
 }
 
+/**
+ *
+ * @param M
+ * @param filename
+ */
 void var_to_file(Eigen::MatrixXi &M, std::string filename) {
     std::ofstream myfile;
     myfile.open(filename);
@@ -150,12 +194,22 @@ void var_to_file(Eigen::MatrixXi &M, std::string filename) {
     myfile.close();
 }
 
+/**
+ *
+ * @param mat
+ * @param cov
+ */
 void covariance_matrix(Eigen::MatrixXd &mat, Eigen::MatrixXd &cov) {
     Eigen::MatrixXd centered = mat.rowwise() - mat.colwise().mean();
     cov = Eigen::MatrixXd::Zero(mat.cols(), mat.cols());
     cov = (centered.adjoint() * centered) / double(mat.rows() - 1);
 }
 
+/**
+ *
+ * @param mat
+ * @param ev
+ */
 void eigenvalues(Eigen::MatrixXd &mat, Eigen::MatrixXd &ev) {
     Eigen::MatrixXd cov = Eigen::MatrixXd::Zero(mat.cols(), mat.cols());
     covariance_matrix(mat, cov);
@@ -163,6 +217,12 @@ void eigenvalues(Eigen::MatrixXd &mat, Eigen::MatrixXd &ev) {
     ev = eigensolver.eigenvalues();
 }
 
+/**
+ *
+ * @param id
+ * @param A
+ * @return
+ */
 std::set<int> two_ring_neighbors(int id, std::vector<std::vector<int>> &A) {
     std::set<int> neighbors;
     for (int j = 0; j < A[id].size(); j++) {
@@ -174,6 +234,14 @@ std::set<int> two_ring_neighbors(int id, std::vector<std::vector<int>> &A) {
     return neighbors;
 }
 
+/**
+ *
+ * @param V
+ * @param N
+ * @param A
+ * @param i
+ * @return
+ */
 bool is_concave(Eigen::MatrixXd &V, Eigen::MatrixXd &N, std::vector<std::vector<int>> &A, int i) {
     bool concave = false;
     for (int j = 0; j < A[i].size(); j++) {
@@ -185,6 +253,14 @@ bool is_concave(Eigen::MatrixXd &V, Eigen::MatrixXd &N, std::vector<std::vector<
     return concave;
 }
 
+/**
+ *
+ * @param V
+ * @param N
+ * @param i
+ * @param j
+ * @return
+ */
 bool is_connection_concave(Eigen::MatrixXd &V, Eigen::MatrixXd &N, int i, int j) {
     bool concave = false;
     if ((((V.row(i) - V.row(j)) / ((V.row(i) - V.row(j)).norm())).dot(N.row(j) - N.row(i))) > 0.01) {
@@ -193,6 +269,15 @@ bool is_connection_concave(Eigen::MatrixXd &V, Eigen::MatrixXd &N, int i, int j)
     return concave;
 }
 
+/**
+ *
+ * @param V
+ * @param N
+ * @param i
+ * @param A
+ * @param ratio
+ * @return
+ */
 bool filter_1b(Eigen::MatrixXd &V, Eigen::MatrixXd &N, int i, std::vector<std::vector<int>> &A, double ratio) {
     std::set<int> neighbors = two_ring_neighbors(i, A);
     neighbors.erase(i);
@@ -207,7 +292,11 @@ bool filter_1b(Eigen::MatrixXd &V, Eigen::MatrixXd &N, int i, std::vector<std::v
 
 
 #define MAXBUFSIZE  ((int) 1e6)
-
+/**
+ *
+ * @param filename
+ * @return
+ */
 Eigen::MatrixXd readMatrix(std::string filename) {
     int cols = 0, rows = 0;
     double buff[MAXBUFSIZE];
@@ -245,7 +334,13 @@ Eigen::MatrixXd readMatrix(std::string filename) {
     return result;
 }
 
-
+/**
+ *
+ * @param V
+ * @param i
+ * @param A
+ * @return
+ */
 bool filter_2(Eigen::MatrixXd &V, int i, std::vector<std::vector<int>> &A) {
     //Eigen::MatrixXd one_ring = Eigen::MatrixXd::Zero(A[i].size(), 3);
     Eigen::MatrixXd one_ring = Eigen::MatrixXd::Zero(A[i].size() + 1, 3);
@@ -259,7 +354,16 @@ bool filter_2(Eigen::MatrixXd &V, int i, std::vector<std::vector<int>> &A) {
     return (ev(0, 0) / ev.sum() > 0.001);
 }
 
-
+/**
+ *
+ * @param V
+ * @param F
+ * @param E
+ * @param L
+ * @param N
+ * @param beta
+ * @param sigma
+ */
 void compute_laplacian_harmonic(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXi &E, Eigen::MatrixXd &L,
                                 Eigen::MatrixXd &N,
                                 double beta, double sigma) {
@@ -308,6 +412,22 @@ void compute_laplacian_harmonic(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::M
     }
 }
 
+/**
+ *
+ * @param V
+ * @param F
+ * @param E
+ * @param G
+ * @param N
+ * @param L
+ * @param vertex_is_concave
+ * @param beta
+ * @param eps
+ * @param sigma
+ * @param clip_bound
+ * @param lap_weighting
+ * @param filter1_thresh
+ */
 void compute_laplacian(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXi &E, Eigen::MatrixXd &G,
                        Eigen::MatrixXd &N, Eigen::MatrixXd &L, Eigen::MatrixXd &vertex_is_concave, double beta,
                        double eps, double sigma, int clip_bound, int lap_weighting, double filter1_thresh) {
@@ -409,6 +529,26 @@ void compute_laplacian(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXi &
     L = w;
 }
 
+/**
+ *
+ * @param V
+ * @param F
+ * @param FN
+ * @param E
+ * @param L
+ * @param point1
+ * @param point2
+ * @param field_id
+ * @param gradient_magnitude
+ * @param isoline_neighbor_length
+ * @param isoline_vertices
+ * @param isoline_face_ids
+ * @param isoline_length
+ * @param isoline_gs
+ * @param isoline_field_id
+ * @param basic_tripletList
+ * @param fields
+ */
 void compute_segmentation_field(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &FN, Eigen::MatrixXi &E,
                                 Eigen::MatrixXd &L, int point1, int point2, int field_id,
                                 std::vector<Eigen::MatrixXd> &gradient_magnitude,
@@ -495,6 +635,12 @@ void compute_segmentation_field(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::M
     }
 }
 
+/**
+ *
+ * @param candidate_length
+ * @param candidate_neighbor_length
+ * @param candidate_svs
+ */
 void compute_candidate_svs(std::vector<double> &candidate_length,
                            std::vector<std::vector<double>> &candidate_neighbor_length,
                            std::vector<double> &candidate_svs) {
@@ -518,6 +664,10 @@ void compute_candidate_svs(std::vector<double> &candidate_length,
     }
 }
 
+/**
+ *
+ * @param m
+ */
 void scale_0_1(Eigen::MatrixXd &m) {
     double min_val = m.minCoeff();
     double max_val = m.maxCoeff();
@@ -527,6 +677,15 @@ void scale_0_1(Eigen::MatrixXd &m) {
     }
 }
 
+/**
+ *
+ * @param gradient_magnitude
+ * @param candidate_vertices
+ * @param candidate_face_ids
+ * @param candidate_length
+ * @param candidate_gs
+ * @param g_hat
+ */
 void compute_candidate_gs(std::vector<Eigen::MatrixXd> &gradient_magnitude,
                           std::vector<std::vector<Eigen::MatrixXd>> &candidate_vertices,
                           std::vector<std::vector<int>> &candidate_face_ids,
@@ -560,7 +719,12 @@ void compute_candidate_gs(std::vector<Eigen::MatrixXd> &gradient_magnitude,
     }
 }
 
-
+/**
+ *
+ * @param V
+ * @param F
+ * @param DA
+ */
 void compute_face_dihedral_angle(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &DA) {
 
     Eigen::MatrixXd FN;
@@ -588,6 +752,16 @@ void compute_face_dihedral_angle(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::
     }
 }
 
+/**
+ *
+ * @param gradient_magnitude
+ * @param candidate_vertices
+ * @param candidate_face_ids
+ * @param candidate_length
+ * @param candidate_gs
+ * @param V
+ * @param F
+ */
 void compute_candidate_gs2(std::vector<Eigen::MatrixXd> &gradient_magnitude,
                            std::vector<std::vector<Eigen::MatrixXd>> &candidate_vertices,
                            std::vector<std::vector<int>> &candidate_face_ids,
@@ -605,6 +779,13 @@ void compute_candidate_gs2(std::vector<Eigen::MatrixXd> &gradient_magnitude,
     }
 }
 
+/**
+ *
+ * @param isoline_vertices
+ * @param isoline_field_id
+ * @param isoline_lines
+ * @param num_fields
+ */
 void create_edges_from_isolines(std::vector<std::vector<Eigen::MatrixXd>> &isoline_vertices,
                                 std::vector<int> &isoline_field_id,
                                 std::vector<std::pair<Eigen::MatrixXd, Eigen::MatrixXd>> &isoline_lines,
@@ -638,6 +819,11 @@ void create_edges_from_isolines(std::vector<std::vector<Eigen::MatrixXd>> &isoli
     }
 }
 
+/**
+ *
+ * @param v
+ * @param m
+ */
 void std_vector_to_eigen_matrix(std::vector<Eigen::MatrixXd> &v, Eigen::MatrixXd &m) {
     m.resize(v.size(), v[0].cols());
     for (int i = 0; i < v.size(); i++) {

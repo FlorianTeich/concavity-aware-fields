@@ -44,6 +44,13 @@ private:
     boost::shared_ptr<std::vector<typename boost::graph_traits<Graph>::vertex_descriptor>> traversal_vertices;
 };
 
+/**
+ *
+ * @param E
+ * @param F
+ * @param segmentation_lines
+ * @param vertex_labels
+ */
 void color_mesh_by_isolines(Eigen::MatrixXi &E, Eigen::MatrixXi &F, std::vector<std::vector<int>> &segmentation_lines,
                             Eigen::MatrixXd &vertex_labels) {
     /// 1. Create Mesh graph (vertices are actual vertices)
@@ -115,6 +122,13 @@ void color_mesh_by_isolines(Eigen::MatrixXi &E, Eigen::MatrixXi &F, std::vector<
   return (in_degree ? acos (rad) * 180.0 / M_PI : acos (rad));
 }*/
 
+/**
+ *
+ * @param V
+ * @param contour1
+ * @param contour2
+ * @return
+ */
 double dist_contour_centers(Eigen::MatrixXd &V, std::vector<int> &contour1, std::vector<int> &contour2) {
     /// Calculate center1
     Eigen::MatrixXd center_contour1 = Eigen::MatrixXd::Zero(1, 3);
@@ -133,6 +147,17 @@ double dist_contour_centers(Eigen::MatrixXd &V, std::vector<int> &contour1, std:
     return (center_contour1 - center_contour2).norm();
 }
 
+/**
+ *
+ * @param isoE
+ * @param isoF
+ * @param contours
+ * @param contour_faces
+ * @param isoV
+ * @param FN
+ * @param isoI
+ * @param contour_id
+ */
 void get_separate_lines(Eigen::MatrixXi &isoE, std::vector<int> &isoF, std::vector<std::vector<int>> &contours,
                         std::vector<std::vector<int>> &contour_faces, Eigen::MatrixXd &isoV, Eigen::MatrixXd &FN,
                         std::vector<int> &isoI, std::vector<std::vector<int>> &contour_id) {

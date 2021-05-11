@@ -133,6 +133,18 @@ bool edge_in_blacklist::operator()(const edge_id_t &edge_id) const {
     return (*blacklist_m).find(edge_id) == (*blacklist_m).end();
 };
 
+/**
+ *
+ * @param F
+ * @param E
+ * @param IF
+ * @param dblA
+ * @param contour_faces
+ * @param g
+ * @param vertex_blacklist
+ * @param edge_blacklist
+ * @return
+ */
 std::vector<double> split_mesh(Eigen::MatrixXi &F, Eigen::MatrixXi &E, Eigen::MatrixXi &IF, Eigen::MatrixXd &dblA,
                                std::vector<int> &contour_faces, FaceGraph &g,
                                std::set<boost::graph_traits<FaceGraph>::vertex_descriptor> vertex_blacklist,
@@ -263,7 +275,11 @@ private:
             typename boost::graph_traits<typeT>::vertex_descriptor>> parent;
 };
 
-
+/**
+ *
+ * @param fg
+ * @return
+ */
 std::vector<std::vector<int>> find_cycles(WhitelistFilteredFaceGraph &fg) {
     std::vector<std::vector<int>> all_cycles;
     typedef typename boost::graph_traits<WhitelistFilteredFaceGraph>::edge_descriptor edge_id;
@@ -351,6 +367,17 @@ std::vector<std::vector<int>> find_cycles(WhitelistFilteredFaceGraph &fg) {
     return all_cycles;
 }
 
+/**
+ *
+ * @param g
+ * @param candidate_faces
+ * @param F
+ * @param VF
+ * @param k
+ * @param strip1
+ * @param strip2
+ * @param TT
+ */
 void get_strip(FaceGraph &g, std::vector<int> &candidate_faces, Eigen::MatrixXi &F, std::vector<std::vector<int>> &VF,
                int k, std::vector<int> &strip1, std::vector<int> &strip2, Eigen::MatrixXi &TT) {
     std::set<FaceGraph::vertex_descriptor> face_basis(candidate_faces.begin(), candidate_faces.end());
@@ -479,7 +506,13 @@ void get_strip(FaceGraph &g, std::vector<int> &candidate_faces, Eigen::MatrixXi 
     strip2 = contours_unsorted[1];
 }
 
-
+/**
+ *
+ * @param strip
+ * @param V
+ * @param F
+ * @return
+ */
 double get_strip_length(std::vector<int> &strip, Eigen::MatrixXd &V, Eigen::MatrixXi &F) {
     double curr_length = 0.0;
     if (strip.size() > 0) {
@@ -538,6 +571,15 @@ double get_strip_length(std::vector<int> &strip, Eigen::MatrixXd &V, Eigen::Matr
     return curr_length;
 }
 
+/**
+ *
+ * @param candidate_length
+ * @param candidate_vertices
+ * @param candidate_svs
+ * @param candidate_faces
+ * @param F
+ * @param V
+ */
 void compute_candidate_svs_by_geodesics(std::vector<double> &candidate_length,
                                         std::vector<std::vector<Eigen::MatrixXd>> &candidate_vertices,
                                         std::vector<double> &candidate_svs,
@@ -564,6 +606,15 @@ void compute_candidate_svs_by_geodesics(std::vector<double> &candidate_length,
 
 }
 
+/**
+ *
+ * @param candidate_length
+ * @param candidate_vertices
+ * @param candidate_svs
+ * @param candidate_faces
+ * @param F
+ * @param V
+ */
 void compute_candidate_svs_by_sdf(std::vector<double> &candidate_length,
                                   std::vector<std::vector<Eigen::MatrixXd>> &candidate_vertices,
                                   std::vector<double> &candidate_svs,
@@ -667,6 +718,14 @@ void compute_candidate_svs_by_sdf(std::vector<double> &candidate_length,
     }*/
 }
 
+/**
+ *
+ * @param candidate_length
+ * @param candidate_svs
+ * @param candidate_faces
+ * @param F
+ * @param V
+ */
 void compute_candidate_svs_new(std::vector<double> &candidate_length,
                                std::vector<double> &candidate_svs,
                                std::vector<std::vector<int>> &candidate_faces,
@@ -722,6 +781,13 @@ void compute_candidate_svs_new(std::vector<double> &candidate_length,
     }
 }
 
+/**
+ *
+ * @param v1
+ * @param v2
+ * @param in_degree
+ * @return
+ */
 double getAngle3D(const Eigen::Vector3d &v1, const Eigen::Vector3d &v2, const bool in_degree) {
     // Compute the actual angle
     double rad = v1.normalized().dot(v2.normalized());
@@ -732,7 +798,15 @@ double getAngle3D(const Eigen::Vector3d &v1, const Eigen::Vector3d &v2, const bo
     return (in_degree ? acos(rad) * 180.0 / M_PI : acos(rad));
 }
 
-
+/**
+ *
+ * @param source_centroid
+ * @param target_centroid
+ * @param source_normal
+ * @param target_normal
+ * @param normal_angle
+ * @return
+ */
 bool
 connIsConvex(const Eigen::Vector3d &source_centroid, const Eigen::Vector3d &target_centroid,
              const Eigen::Vector3d &source_normal, const Eigen::Vector3d &target_normal, double &normal_angle) {
@@ -760,7 +834,18 @@ connIsConvex(const Eigen::Vector3d &source_centroid, const Eigen::Vector3d &targ
     return (is_convex && is_smooth);
 }
 
-
+/**
+ *
+ * @param V
+ * @param N
+ * @param F
+ * @param dblA
+ * @param IF
+ * @param E
+ * @param candidate_face_ids
+ * @param candidate_score
+ * @param applied_isolines
+ */
 void valid_cuts(Eigen::MatrixXd &V, Eigen::MatrixXd &N, Eigen::MatrixXi &F, Eigen::MatrixXd &dblA, Eigen::MatrixXi &IF,
                 Eigen::MatrixXi &E,
                 std::vector<std::vector<int>> &candidate_face_ids, std::vector<double> &candidate_score,

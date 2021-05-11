@@ -50,6 +50,13 @@ float dist(float *F1, float *F2) {
     return abs(std::max(*F1, *F2) - std::min(*F1, *F2));
 }
 
+/**
+ *
+ * @param V
+ * @param F
+ * @param label
+ * @param min_part
+ */
 void mergeSegments(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &label, double min_part) {
     Graph g(V.rows());
     /// Add edges
@@ -213,6 +220,13 @@ void mergeSegments(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &labe
     }
 }
 
+/**
+ *
+ * @param V
+ * @param F
+ * @param label
+ * @param min_part
+ */
 void mergeSegments_old(Eigen::MatrixXd &V, Eigen::MatrixXi &F, Eigen::MatrixXd &label, double min_part) {
     Graph g(V.rows());
     /// Add edges
