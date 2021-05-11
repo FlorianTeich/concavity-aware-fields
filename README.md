@@ -1,4 +1,7 @@
 # concavity-aware-fields
+
+![](https://img.shields.io/github/repo-size/FlorianTeich/concavity-aware-fields)
+
 ## Details
 This is my C++ implementation of the 3D mesh segmentation approach from Au et al.
 
